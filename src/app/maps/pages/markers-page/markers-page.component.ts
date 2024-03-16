@@ -87,6 +87,14 @@ deleteMarker(index:number){
   this.markers.splice(index, 1);
 }
 
+flyTo(marker : Marker){
 
+ if(!this.map) return;
+
+  this.map.flyTo({
+    zoom:14,
+    center: marker.getLngLat()
+  })
+}
 
 }
