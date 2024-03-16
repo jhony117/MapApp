@@ -6,6 +6,11 @@ interface MarkerAndColor {
    marker : Marker ;
 }
 
+interface PlainMarker{
+  color :string;
+  lngLat: number[]
+}
+
 
 @Component({
   templateUrl: './markers-page.component.html',
@@ -32,6 +37,9 @@ export class MarkersPageComponent {
       center: this.currentLngLat, // starting position [lng, lat]
       zoom: 13, // starting zoom
     });
+
+
+    this.readFromLocalStorage()
 
 
   //   const markerHtml = document.createElement('div');
@@ -80,6 +88,7 @@ this.markers.push({
   color :color,
   marker :marker
 });
+this.saveToLocalStorage();
 }
 
 deleteMarker(index:number){
@@ -97,4 +106,32 @@ flyTo(marker : Marker){
   })
 }
 
+  saveToLocalStorage(){
+ //? recopila las cosas mas importantes del markador de modo que sea mas factible y facil ponerlos en une locasl storage
+     //*Recopila solo lo datos necesarios para su reimplementacion
+   const plainMarkers : PlainMarker[] = this.markers.map( ({color , marker}) => {
+    return {
+      color,
+      lngLat: marker.getLngLat().toArray()   //regresa el lngLat como un arreglo
+    }
+   } );
+
+   localStorage.setItem('plainMarkers', JSON.stringify(plainMarkers));
+
+
+  }
+
+  readFromLocalStorage(){    //* si es null regresamos un string por que el localStorge solo recive string
+   const plainMarkersString = localStorage.getItem('plainMarkers') ?? '[]';
+   const plainMarkers : PlainMarker[] = JSON.parse(plainMarkersString);
+//! Recuerda que una interface no te exige las propiedades , como si lo hace una
+
+  plainMarkers.forEach( ({color, lngLat}) => {
+    const [lng, lat] = lngLat;
+    const coords = new LngLat(lng,lat);
+
+    this.addMarker(coords, color);
+  } )
+
+  }
 }
