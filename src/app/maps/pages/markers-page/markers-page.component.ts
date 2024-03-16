@@ -89,6 +89,9 @@ this.markers.push({
   marker :marker
 });
 this.saveToLocalStorage();
+
+marker.on('dragend',  () => this.saveToLocalStorage()
+)
 }
 
 deleteMarker(index:number){
